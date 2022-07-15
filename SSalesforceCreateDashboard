@@ -1,0 +1,73 @@
+package week4.day2;
+
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+public class SalesforceCreateDashboard {
+public static void main(String[] args) throws InterruptedException {
+	
+	//1. Login to https://login.salesforce.com
+	WebDriverManager.chromedriver().setup();		
+	ChromeDriver driver=new ChromeDriver();		
+	driver.get("https://login.salesforce.com");
+	driver.manage().window().maximize();
+	driver.manage().timeouts().implicitlyWait(java.time.Duration.ofSeconds(30));
+	driver.findElement(By.name("username")).sendKeys("ramkumar.ramaiah@testleaf.com");
+	driver.findElement(By.name("pw")).sendKeys("Password@123");
+	driver.findElement(By.name("Login")).click();
+	Thread.sleep(10000);
+
+	//2. Click on the toggle menu button from the left corner
+	driver.findElement(By.xpath("//div[@class='slds-icon-waffle']")).click();
+	//driver.findElement(By.xpath("//button[@class='slds-button slds-show']//div")).click();
+	
+	//3. Click View All and click Dashboards from App Launcher
+	driver.findElement(By.xpath("//button[text()='View All']")).click();
+	Thread.sleep(3000);
+	WebElement Db=driver.findElement(By.xpath("//p[text()='Dashboards']"));
+	 JavascriptExecutor js = (JavascriptExecutor) driver;
+	 js.executeScript("arguments[0].scrollIntoView();", Db);
+	 js.executeScript("arguments[0].click();", Db);
+	
+	 //4. Click on the New Dashboard option 
+	driver.findElement(By.xpath("//div[@title='New Dashboard']")).click();
+	Thread.sleep(3000);
+	
+	//5.Handle the frame
+	WebElement frame=driver.findElement(By.xpath("//iframe[@title='dashboard']"));
+	driver.switchTo().frame(frame);
+	
+	//6. Enter Name as 'Salesforce Automation by Your Name ' and Click on Create.
+	driver.findElement(By.id("dashboardNameInput")).sendKeys("Salesforce Automation by Priya");
+	driver.findElement(By.id("submitBtn")).click();
+	
+	//7.Click on Save and Verify Dashboard name.
+	Thread.sleep(5000);
+	driver.findElement(By.xpath("//button[text()='Save']")).click();
+	System.out.println("save button clicked");
+	Thread.sleep(5000);
+	//driver.findElement(By.xpath("//button[text()='Done']")).click();
+	//WebElement done=driver.findElement(By.xpath("//div[@class='toolbarActions']//button[text()='Done']"));
+	 //JavascriptExecutor js1 = (JavascriptExecutor) driver;
+	 //js.executeScript("arguments[0].scrollIntoView();", done);
+	 //js.executeScript("arguments[0].click();", done);
+	
+	String title=driver.findElement(By.xpath("//span[@class='slds-form-element__static slds-grid slds-grid_align-spread']")).getText();
+	System.out.println(title);
+	if (title.contains("Salesforce Automation by Priya"))
+	{
+		System.out.println("Dashboard title is correct");
+	}
+	else
+		System.out.println("Dashboard title is not correct");
+	driver.switchTo().defaultContent();
+	driver.close();
+}
+
+}
